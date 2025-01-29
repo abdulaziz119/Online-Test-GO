@@ -5,8 +5,10 @@ CREATE TABLE users (
                        username VARCHAR(50) UNIQUE NOT NULL,
                        password VARCHAR(255) NOT NULL,
                        role VARCHAR(20) CHECK (role IN ('admin', 'teacher', 'student')),
+                       is_active BOOLEAN DEFAULT true,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                       is_active BOOLEAN DEFAULT true
+                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       deleted_at TIMESTAMP DEFAULT NULL
 );
 
 -- Subjects table
@@ -14,7 +16,10 @@ CREATE TABLE subjects (
                           id SERIAL PRIMARY KEY,
                           name VARCHAR(100) NOT NULL,
                           description TEXT,
-                          is_active BOOLEAN DEFAULT true
+                          is_active BOOLEAN DEFAULT true,
+                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                          deleted_at TIMESTAMP DEFAULT NULL
 );
 
 -- Tests table
@@ -30,6 +35,8 @@ CREATE TABLE tests (
                        end_time TIMESTAMP NOT NULL,
                        is_active BOOLEAN DEFAULT true,
                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                       deleted_at TIMESTAMP DEFAULT NULL,
                        CONSTRAINT valid_time_range CHECK (end_time > start_time)
 );
 
@@ -41,6 +48,9 @@ CREATE TABLE questions (
                            points INTEGER DEFAULT 1,
                            question_type VARCHAR(20) CHECK (question_type IN ('single', 'multiple')),
                            order_number INTEGER NOT NULL,
+                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           deleted_at TIMESTAMP DEFAULT NULL,
                            UNIQUE (test_id, order_number)
 );
 
@@ -51,6 +61,9 @@ CREATE TABLE answers (
                          answer_text TEXT NOT NULL,
                          is_correct BOOLEAN NOT NULL,
                          order_number INTEGER NOT NULL,
+                         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                         deleted_at TIMESTAMP DEFAULT NULL,
                          UNIQUE (question_id, order_number)
 );
 
@@ -63,6 +76,9 @@ CREATE TABLE test_attempts (
                                finished_at TIMESTAMP,
                                score INTEGER,
                                status VARCHAR(20) CHECK (status IN ('started', 'finished')),
+                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               deleted_at TIMESTAMP DEFAULT NULL,
                                CONSTRAINT valid_attempt_time CHECK (finished_at > started_at)
 );
 
@@ -72,7 +88,10 @@ CREATE TABLE user_answers (
                               attempt_id INTEGER REFERENCES test_attempts(id),
                               question_id INTEGER REFERENCES questions(id),
                               answer_id INTEGER REFERENCES answers(id),
-                              answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                              answered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              deleted_at TIMESTAMP DEFAULT NULL
 );
 
 -- Indexes for better performance
