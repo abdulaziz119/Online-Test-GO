@@ -33,43 +33,29 @@ func NewPostgres() *bun.DB {
 }
 
 func runMigrations(db *bun.DB) error {
-	migrationFiles := []string{
-		"internal/pkg/script/migrations/users.sql",
-		"internal/pkg/script/migrations/subjects.sql",
-		"internal/pkg/script/migrations/questions.sql",
-		"internal/pkg/script/migrations/answers.sql",
-		"internal/pkg/script/migrations/tests.sql",
-		"internal/pkg/script/migrations/test_attempts.sql",
-		"internal/pkg/script/migrations/user_answers.sql",
+	migrationFile := "internal/pkg/script/migrations.sql"
+
+	log.Printf("Running migration file: %s", migrationFile)
+	content, err := ioutil.ReadFile(migrationFile)
+	if err != nil {
+		return err
 	}
 
-	for _, file := range migrationFiles {
-		log.Printf("Running migration file: %s", file)
-		content, err := ioutil.ReadFile(file)
-		if err != nil {
-			log.Printf("Error reading migration file %s: %v", file, err)
+	queries := strings.Split(string(content), ";")
+
+	for _, query := range queries {
+		query = strings.TrimSpace(query)
+		if query == "" {
 			continue
 		}
 
-		statements := strings.Split(string(content), ";")
-		for i, stmt := range statements {
-			stmt = strings.TrimSpace(stmt)
-			if stmt == "" {
-				continue
-			}
-
-			log.Printf("Executing statement %d from %s", i+1, file)
-			_, err = db.Exec(stmt)
-			if err != nil {
-				log.Printf("Error executing statement %d from %s: %v", i+1, file, err)
-				log.Printf("Statement was: %s", stmt)
-				continue
-			}
-			log.Printf("Successfully executed statement %d from %s", i+1, file)
+		_, err = db.Exec(query)
+		if err != nil {
+			log.Printf("Error executing query: %v", err)
+			return err
 		}
-		log.Printf("Completed migration file: %s", file)
 	}
 
-	log.Println("All migrations completed")
+	log.Printf("Migrations completed successfully")
 	return nil
 }
