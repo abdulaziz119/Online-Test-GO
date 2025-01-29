@@ -35,8 +35,12 @@ func NewPostgres() *bun.DB {
 func runMigrations(db *bun.DB) error {
 	migrationFiles := []string{
 		"internal/pkg/script/migrations/users.sql",
-		"internal/pkg/script/migrations/projects.sql",
-		"internal/pkg/script/migrations/tasks.sql",
+		"internal/pkg/script/migrations/subjects.sql",
+		"internal/pkg/script/migrations/questions.sql",
+		"internal/pkg/script/migrations/answers.sql",
+		"internal/pkg/script/migrations/tests.sql",
+		"internal/pkg/script/migrations/test_attempts.sql",
+		"internal/pkg/script/migrations/user_answers.sql",
 	}
 
 	for _, file := range migrationFiles {

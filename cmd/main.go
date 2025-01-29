@@ -2,6 +2,7 @@ package main
 
 import (
 	"Online-Test-GO/internal/pkg/config"
+	"Online-Test-GO/internal/pkg/repository/postgres"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -25,7 +26,7 @@ func main() {
 		MaxAge: 12 * time.Hour,
 	}))
 
-	//postgresDB := postgres.NewPostgres()
+	postgres.NewPostgres()
 
 	//repository
 	//userRepo := users.NewRepository(postgresDB)
